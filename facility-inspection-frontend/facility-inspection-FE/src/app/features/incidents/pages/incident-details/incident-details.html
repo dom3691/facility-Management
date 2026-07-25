@@ -1,0 +1,95 @@
+@if (loading()) {
+  <div class="state"><mat-spinner diameter="40" /><p>Loading incident…</p></div>
+} @else if (error()) {
+  <div class="state state--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <a mat-flat-button routerLink="/incidents">Back to incidents</a>
+  </div>
+} @else if (incident(); as inc) {
+  <app-page-header [title]="inc.incidentNumber" subtitle="Incident detail">
+    <a actions mat-stroked-button routerLink="/incidents">
+      <mat-icon>arrow_back</mat-icon>
+      Back to list
+    </a>
+  </app-page-header>
+
+  <div class="detail-grid">
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Overview</h2>
+        <app-status-chip [status]="inc.status" />
+      </div>
+
+      <dl class="facts">
+        <div class="fact">
+          <dt>Business Unit</dt>
+          <dd>{{ inc.businessUnit }}</dd>
+        </div>
+        <div class="fact">
+          <dt>SAP ID</dt>
+          <dd class="mono">{{ inc.sapId }}</dd>
+        </div>
+        <div class="fact">
+          <dt>Facility</dt>
+          <dd>{{ inc.facilityName || '—' }}</dd>
+        </div>
+        <div class="fact">
+          <dt>Location</dt>
+          <dd>{{ inc.locationName || '—' }}</dd>
+        </div>
+        <div class="fact">
+          <dt>Incident Date</dt>
+          <dd>{{ inc.incidentDate | date: 'medium' }}</dd>
+        </div>
+        <div class="fact">
+          <dt>Reported</dt>
+          <dd>{{ inc.createdDate | date: 'medium' }}</dd>
+        </div>
+      </dl>
+
+      <div class="description">
+        <h3 class="description__label">Description</h3>
+        <p class="description__text">{{ inc.description }}</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Attachments</h2>
+        <span class="card__count">{{ inc.attachments.length }}</span>
+      </div>
+
+      @if (inc.attachments.length === 0) {
+        <div class="empty">
+          <mat-icon>attachment</mat-icon>
+          <p>No attachments</p>
+        </div>
+      } @else {
+        <ul class="files">
+          @for (file of inc.attachments; track file.id) {
+            <li class="file">
+              <mat-icon class="file__icon">description</mat-icon>
+              <div class="file__meta">
+                <span class="file__name">{{ file.fileName }}</span>
+                <span class="file__size">{{ formatSize(file.fileSizeBytes) }}</span>
+              </div>
+              <button
+                mat-icon-button
+                aria-label="Download attachment"
+                (click)="download(file)"
+                [disabled]="downloadingId() === file.id"
+              >
+                @if (downloadingId() === file.id) {
+                  <mat-spinner diameter="18" />
+                } @else {
+                  <mat-icon>download</mat-icon>
+                }
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+}

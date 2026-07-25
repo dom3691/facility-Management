@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk"><!--
+    DOMAIN LAYER
+    The heart of the system. Pure C#, ZERO external/NuGet dependencies.
+    Contains entities, value objects, enums, domain events and domain exceptions.
+    Common properties (TargetFramework, Nullable, ImplicitUsings) come from
+    ../../Directory.Build.props.
+  -->
+
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>

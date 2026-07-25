@@ -1,0 +1,43 @@
+<div class="dt-wrap">
+  <table mat-table [dataSource]="rows()" class="dt">
+    @for (col of columns(); track col.key) {
+      <ng-container [matColumnDef]="col.key">
+        <th mat-header-cell *matHeaderCellDef [class.dt__end]="col.align === 'end'">{{ col.header }}</th>
+        <td mat-cell *matCellDef="let row" [class.dt__end]="col.align === 'end'">
+          @switch (col.type) {
+            @case ('date') {
+              {{ ($any(cellValue(col, row)) | date: 'mediumDate') || '—' }}
+            }
+            @case ('boolean') {
+              <span class="dt__bool" [class.dt__bool--on]="cellValue(col, row)">
+                {{ cellValue(col, row) ? 'Yes' : 'No' }}
+              </span>
+            }
+            @case ('mono') {
+              <span class="dt__mono">{{ cellValue(col, row) ?? '—' }}</span>
+            }
+            @default {
+              {{ cellValue(col, row) ?? '—' }}
+            }
+          }
+        </td>
+      </ng-container>
+    }
+
+    @if (actions()) {
+      <ng-container matColumnDef="__actions">
+        <th mat-header-cell *matHeaderCellDef class="dt__end"></th>
+        <td mat-cell *matCellDef="let row" class="dt__end">
+          <ng-container *ngTemplateOutlet="actions()!; context: { $implicit: row }" />
+        </td>
+      </ng-container>
+    }
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns()"></tr>
+  </table>
+
+  @if (rows().length === 0) {
+    <div class="dt__empty">{{ emptyMessage() }}</div>
+  }
+</div>

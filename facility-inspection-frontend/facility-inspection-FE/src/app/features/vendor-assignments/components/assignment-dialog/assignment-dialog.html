@@ -1,0 +1,68 @@
+<h2 mat-dialog-title>Assign Vendor</h2>
+
+<mat-dialog-content>
+  <p class="dialog-sub">
+    Incident <span class="mono">{{ data.incidentNumber || data.incidentId }}</span>
+  </p>
+
+  @if (error(); as err) {
+    <div class="alert" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ err }}</span>
+    </div>
+  }
+
+  <form [formGroup]="form" class="dialog-form" novalidate>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Vendor Category</mat-label>
+      <mat-select formControlName="vendorCategory">
+        @for (c of categories; track c.value) {
+          <mat-option [value]="c.value">{{ c.label }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.vendorCategory.touched && form.controls.vendorCategory.hasError('required')) {
+        <mat-error>Category is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Vendor</mat-label>
+      <mat-select formControlName="vendorId">
+        @for (v of vendorList(); track v.id) {
+          <mat-option [value]="v.id">{{ v.vendorName }}</mat-option>
+        }
+      </mat-select>
+      @if (loadingVendors()) {
+        <mat-hint>Loading vendors…</mat-hint>
+      } @else if (!form.controls.vendorCategory.value) {
+        <mat-hint>Select a category first</mat-hint>
+      } @else if (vendorList().length === 0) {
+        <mat-hint>No active vendors in this category</mat-hint>
+      }
+      @if (form.controls.vendorId.touched && form.controls.vendorId.hasError('required')) {
+        <mat-error>Vendor is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Assignment Notes (optional)</mat-label>
+      <textarea
+        matInput
+        rows="3"
+        formControlName="notes"
+        placeholder="Instructions or context for the vendor…"
+      ></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close [disabled]="saving()">Cancel</button>
+  <button mat-flat-button class="assign-btn" (click)="submit()" [disabled]="saving()">
+    @if (saving()) {
+      <span class="spinner-row"><mat-spinner diameter="18" /><span>Assigning…</span></span>
+    } @else {
+      Assign Vendor
+    }
+  </button>
+</mat-dialog-actions>

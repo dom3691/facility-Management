@@ -1,0 +1,68 @@
+@if (loading()) {
+  <div class="state"><mat-spinner diameter="40" /><p>Loading work order…</p></div>
+} @else if (error()) {
+  <div class="state state--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <a mat-flat-button routerLink="/work-orders">Back to work orders</a>
+  </div>
+} @else if (workOrder(); as wo) {
+  <app-page-header [title]="wo.workOrderNumber" subtitle="Work order detail">
+    <a actions mat-stroked-button routerLink="/work-orders">
+      <mat-icon>arrow_back</mat-icon>
+      Back to list
+    </a>
+  </app-page-header>
+
+  <div class="detail-grid">
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Overview</h2>
+        <app-status-chip [status]="wo.status" />
+      </div>
+
+      <dl class="facts">
+        <div class="fact">
+          <dt>Work Order No</dt>
+          <dd class="mono">{{ wo.workOrderNumber }}</dd>
+        </div>
+        <div class="fact">
+          <dt>Incident</dt>
+          <dd>
+            <a class="mono link" [routerLink]="['/incidents', wo.incidentId]">
+              {{ wo.incidentNumber || '—' }}
+            </a>
+          </dd>
+        </div>
+        <div class="fact">
+          <dt>Vendor</dt>
+          <dd>{{ wo.vendorName || '—' }}</dd>
+        </div>
+        <div class="fact">
+          <dt>Created</dt>
+          <dd>{{ wo.createdDate | date: 'medium' }}</dd>
+        </div>
+        <div class="fact">
+          <dt>Completed</dt>
+          <dd>{{ wo.completedDate ? (wo.completedDate | date: 'medium') : '—' }}</dd>
+        </div>
+      </dl>
+
+      @if (wo.description) {
+        <div class="description">
+          <h3 class="description__label">Description</h3>
+          <p class="description__text">{{ wo.description }}</p>
+        </div>
+      }
+    </section>
+
+    <section class="card">
+      <h2 class="card__title">Work Order Timeline</h2>
+      <app-work-order-timeline
+        [status]="wo.status"
+        [createdDate]="wo.createdDate"
+        [completedDate]="wo.completedDate ?? null"
+      />
+    </section>
+  </div>
+}

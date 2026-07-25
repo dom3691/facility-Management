@@ -1,0 +1,25 @@
+<div
+  class="shell"
+  [class.shell--rail]="layout.rail()"
+  [class.shell--mobile]="layout.isMobile()"
+>
+  @if (layout.isMobile() && layout.mobileOpen()) {
+    <div class="shell__backdrop" (click)="layout.setMobileOpen(false)"></div>
+  }
+
+  <aside class="shell__sidebar" [class.shell__sidebar--open]="layout.mobileOpen()">
+    <app-sidebar />
+  </aside>
+
+  <div class="shell__main">
+    <app-top-nav />
+
+    <div class="shell__crumbbar">
+      <app-breadcrumb />
+    </div>
+
+    <main class="shell__page">
+      <router-outlet />
+    </main>
+  </div>
+</div>

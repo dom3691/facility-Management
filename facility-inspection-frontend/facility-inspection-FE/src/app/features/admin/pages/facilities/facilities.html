@@ -1,0 +1,27 @@
+<app-page-header title="Facilities" subtitle="Sites where incidents are reported">
+  <button actions mat-flat-button class="brand-btn" (click)="add()">
+    <mat-icon>add</mat-icon>
+    Add Facility
+  </button>
+</app-page-header>
+
+<div class="panel">
+  <div class="toolbar">
+    <mat-form-field appearance="outline" class="toolbar__search" subscriptSizing="dynamic">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput type="search" placeholder="Search facilities…" [ngModel]="search()" (ngModelChange)="search.set($event)" />
+    </mat-form-field>
+  </div>
+
+  @if (loading()) {
+    <div class="state"><mat-spinner diameter="36" /><p>Loading…</p></div>
+  } @else if (error()) {
+    <div class="state state--error">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-flat-button (click)="load()">Try again</button>
+    </div>
+  } @else {
+    <app-data-table [columns]="columns" [rows]="visibleRows()" emptyMessage="No facilities found." />
+  }
+</div>

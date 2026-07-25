@@ -1,0 +1,39 @@
+.bc__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bc__item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.bc__link {
+  color: var(--brand-muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+
+  &:hover {
+    color: var(--brand-blue);
+    text-decoration: underline;
+  }
+}
+
+.bc__current {
+  color: var(--brand-navy);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.bc__sep {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: var(--brand-muted);
+  margin: 0 0.1rem;
+}

@@ -1,0 +1,80 @@
+@if (loading()) {
+  <div class="state"><mat-spinner diameter="40" /><p>Loading…</p></div>
+} @else if (error()) {
+  <div class="state state--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <a mat-flat-button routerLink="/vendor-assignments">Back</a>
+  </div>
+} @else if (incident(); as inc) {
+  <app-page-header [title]="'Assign Vendor · ' + inc.incidentNumber" subtitle="Assign a vendor to remediate this incident">
+    <a actions mat-stroked-button routerLink="/vendor-assignments">
+      <mat-icon>arrow_back</mat-icon>
+      Back to queue
+    </a>
+  </app-page-header>
+
+  <div class="context">
+    <div class="context__main">
+      <div class="context__row">
+        <span class="context__num mono">{{ inc.incidentNumber }}</span>
+        <app-status-chip [status]="inc.status" />
+      </div>
+      <div class="context__meta">
+        <span><mat-icon>business</mat-icon> {{ inc.businessUnit }}</span>
+        <span><mat-icon>apartment</mat-icon> {{ inc.facilityName || '—' }}</span>
+        <span><mat-icon>place</mat-icon> {{ inc.locationName || '—' }}</span>
+      </div>
+    </div>
+    <button mat-flat-button class="assign-btn" (click)="openAssignDialog()" [disabled]="!canAssign()">
+      <mat-icon>assignment_ind</mat-icon>
+      Assign Vendor
+    </button>
+  </div>
+
+  @if (!canAssign()) {
+    <div class="note">
+      <mat-icon>info</mat-icon>
+      @if (!eligibleInspection()) {
+        <span>This incident has no faulty inspection to assign a vendor against.</span>
+      } @else {
+        <span>This incident is not awaiting vendor assignment (current status: {{ inc.status }}).</span>
+      }
+    </div>
+  }
+
+  <section class="card">
+    <div class="card__head">
+      <h2 class="card__title">Assignment History</h2>
+      <span class="card__count">{{ assignments().length }}</span>
+    </div>
+
+    @if (assignments().length === 0) {
+      <div class="empty">
+        <mat-icon>history</mat-icon>
+        <p>No vendors have been assigned yet.</p>
+      </div>
+    } @else {
+      <table mat-table [dataSource]="assignments()" class="grid">
+        <ng-container matColumnDef="vendor">
+          <th mat-header-cell *matHeaderCellDef>Vendor</th>
+          <td mat-cell *matCellDef="let a">{{ a.vendorName || '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef>Category</th>
+          <td mat-cell *matCellDef="let a">{{ categoryLabel(a.vendorCategory) }}</td>
+        </ng-container>
+        <ng-container matColumnDef="assigned">
+          <th mat-header-cell *matHeaderCellDef>Assigned</th>
+          <td mat-cell *matCellDef="let a">{{ a.assignedDate | date: 'medium' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="notes">
+          <th mat-header-cell *matHeaderCellDef>Notes</th>
+          <td mat-cell *matCellDef="let a" class="notes-cell">{{ a.notes || '—' }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="historyColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: historyColumns"></tr>
+      </table>
+    }
+  </section>
+}

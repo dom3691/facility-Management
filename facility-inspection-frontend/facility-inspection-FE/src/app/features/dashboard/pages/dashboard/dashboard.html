@@ -1,0 +1,64 @@
+<app-page-header
+  [title]="'Welcome back, ' + (user()?.firstName || 'there')"
+  [subtitle]="scopeLabel()"
+>
+  <button actions mat-stroked-button (click)="load()" [disabled]="loading()">
+    <mat-icon>refresh</mat-icon>
+    Refresh
+  </button>
+</app-page-header>
+
+@if (loading()) {
+  <div class="dash__state">
+    <mat-spinner diameter="40" />
+    <p>Loading dashboard…</p>
+  </div>
+} @else if (error()) {
+  <div class="dash__state dash__state--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <button mat-flat-button color="primary" (click)="load()">Try again</button>
+  </div>
+} @else {
+  <!-- Stat cards -->
+  <section class="dash__cards">
+    @for (card of cards(); track card.label) {
+      <article class="stat" [attr.data-accent]="card.accent">
+        <div class="stat__icon">
+          <mat-icon>{{ card.icon }}</mat-icon>
+        </div>
+        <div class="stat__body">
+          <span class="stat__value">{{ card.value }}</span>
+          <span class="stat__label">{{ card.label }}</span>
+        </div>
+      </article>
+    }
+  </section>
+
+  <!-- Charts -->
+  <section class="dash__charts">
+    <article class="panel">
+      <header class="panel__head">
+        <h2 class="panel__title">Work Order Status</h2>
+        <span class="panel__sub">Distribution across states</span>
+      </header>
+      <div class="panel__chart">
+        @if (workOrderChart(); as cfg) {
+          <app-chart [config]="cfg" />
+        }
+      </div>
+    </article>
+
+    <article class="panel">
+      <header class="panel__head">
+        <h2 class="panel__title">Incident Pipeline</h2>
+        <span class="panel__sub">Items awaiting action at each stage</span>
+      </header>
+      <div class="panel__chart">
+        @if (incidentChart(); as cfg) {
+          <app-chart [config]="cfg" />
+        }
+      </div>
+    </article>
+  </section>
+}

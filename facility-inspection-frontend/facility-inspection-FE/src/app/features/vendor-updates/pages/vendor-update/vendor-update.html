@@ -1,0 +1,148 @@
+@if (loading()) {
+  <div class="state"><mat-spinner diameter="40" /><p>Loading…</p></div>
+} @else if (error()) {
+  <div class="state state--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <a mat-flat-button routerLink="/vendor-updates">Back</a>
+  </div>
+} @else if (workOrder(); as wo) {
+  <app-page-header [title]="wo.workOrderNumber" subtitle="Post progress and completion updates">
+    <a actions mat-stroked-button routerLink="/vendor-updates">
+      <mat-icon>arrow_back</mat-icon>
+      Back to my jobs
+    </a>
+  </app-page-header>
+
+  <div class="context">
+    <div class="context__row">
+      <span class="context__num mono">{{ wo.workOrderNumber }}</span>
+      <app-status-chip [status]="wo.status" />
+    </div>
+    <div class="context__meta">
+      <span><mat-icon>report_problem</mat-icon> {{ wo.incidentNumber || '—' }}</span>
+      <span><mat-icon>event</mat-icon> {{ wo.createdDate | date: 'mediumDate' }}</span>
+    </div>
+    @if (wo.description) {
+      <p class="context__desc">{{ wo.description }}</p>
+    }
+  </div>
+
+  <div class="layout">
+    <!-- Update forms -->
+    <section class="forms">
+      @if (canPost()) {
+        <div class="card">
+          <mat-tab-group animationDuration="200ms">
+            <mat-tab label="Progress Update">
+              <form [formGroup]="progressForm" (ngSubmit)="submitProgress()" class="form" novalidate>
+                <mat-form-field appearance="outline" class="pct">
+                  <mat-label>Progress</mat-label>
+                  <input matInput type="number" min="0" max="100" formControlName="progressPercentage" />
+                  <span matTextSuffix>%</span>
+                  @if (progressForm.controls.progressPercentage.hasError('min') || progressForm.controls.progressPercentage.hasError('max')) {
+                    <mat-error>Enter a value between 0 and 100.</mat-error>
+                  }
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full">
+                  <mat-label>Progress comment</mat-label>
+                  <textarea matInput rows="3" formControlName="progressComment" placeholder="What was done, what's next…"></textarea>
+                  @if (progressForm.controls.progressComment.touched && progressForm.controls.progressComment.hasError('required')) {
+                    <mat-error>A comment is required.</mat-error>
+                  }
+                </mat-form-field>
+
+                <label class="field-label">Evidence (optional)</label>
+                <app-file-drop #progressDrop (filesChange)="progressFiles.set($event)" />
+
+                <div class="form__actions">
+                  <button mat-flat-button type="submit" class="submit-btn" [disabled]="savingProgress()">
+                    @if (savingProgress()) {
+                      <span class="spinner-row"><mat-spinner diameter="18" /><span>Posting…</span></span>
+                    } @else { Post Update }
+                  </button>
+                </div>
+              </form>
+            </mat-tab>
+
+            <mat-tab label="Mark Complete">
+              <form [formGroup]="completeForm" (ngSubmit)="submitComplete()" class="form" novalidate>
+                <div class="complete-note">
+                  <mat-icon>info</mat-icon>
+                  <span>Marking complete sends the job for verification. Add a completion comment and evidence.</span>
+                </div>
+
+                <mat-form-field appearance="outline" class="full">
+                  <mat-label>Completion comment</mat-label>
+                  <textarea matInput rows="3" formControlName="completionComment" placeholder="Summary of the completed work…"></textarea>
+                  @if (completeForm.controls.completionComment.touched && completeForm.controls.completionComment.hasError('required')) {
+                    <mat-error>A completion comment is required.</mat-error>
+                  }
+                </mat-form-field>
+
+                <label class="field-label">Completion evidence (optional)</label>
+                <app-file-drop #completeDrop (filesChange)="completeFiles.set($event)" />
+
+                <div class="form__actions">
+                  <button mat-flat-button type="submit" class="submit-btn submit-btn--complete" [disabled]="savingComplete()">
+                    @if (savingComplete()) {
+                      <span class="spinner-row"><mat-spinner diameter="18" /><span>Completing…</span></span>
+                    } @else { <ng-container><mat-icon>task_alt</mat-icon> Mark Complete</ng-container> }
+                  </button>
+                </div>
+              </form>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+      } @else {
+        <div class="card done-note">
+          <mat-icon>verified</mat-icon>
+          <p>This job is {{ wo.status | lowercase }} — no further updates can be posted.</p>
+        </div>
+      }
+    </section>
+
+    <!-- Progress history -->
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Progress Updates</h2>
+        <span class="card__count">{{ history().length }}</span>
+      </div>
+
+      @if (history().length === 0) {
+        <div class="empty"><mat-icon>timeline</mat-icon><p>No updates yet.</p></div>
+      } @else {
+        <ol class="history">
+          @for (u of history(); track u.id) {
+            <li class="upd" [class.upd--complete]="u.isCompletionUpdate">
+              <div class="upd__dot"><mat-icon>{{ u.isCompletionUpdate ? 'check' : 'sync' }}</mat-icon></div>
+              <div class="upd__body">
+                <div class="upd__row">
+                  <span class="upd__title">
+                    @if (u.isCompletionUpdate) { Completed }
+                    @else { Progress @if (u.progressPercentage != null) { · {{ u.progressPercentage }}% } }
+                  </span>
+                  <span class="upd__time">{{ u.updatedDate | date: 'medium' }}</span>
+                </div>
+                @if (!u.isCompletionUpdate && u.progressPercentage != null) {
+                  <mat-progress-bar mode="determinate" [value]="u.progressPercentage" class="upd__bar" />
+                }
+                <p class="upd__text">{{ u.isCompletionUpdate ? u.completionComment : u.progressComment }}</p>
+                @if (u.attachments.length) {
+                  <div class="upd__files">
+                    @for (f of u.attachments; track f.id) {
+                      <button class="chip-file" (click)="download(f)" [disabled]="downloadingId() === f.id">
+                        <mat-icon>attach_file</mat-icon>{{ f.fileName }}
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            </li>
+          }
+        </ol>
+      }
+    </section>
+  </div>
+}

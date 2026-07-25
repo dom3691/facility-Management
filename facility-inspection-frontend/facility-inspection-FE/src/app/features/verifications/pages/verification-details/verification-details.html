@@ -1,0 +1,128 @@
+@if (loading()) {
+  <div class="state"><mat-spinner diameter="40" /><p>Loading…</p></div>
+} @else if (error()) {
+  <div class="state state--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <a mat-flat-button routerLink="/verifications">Back</a>
+  </div>
+} @else if (workOrder(); as wo) {
+  <app-page-header [title]="'Verify · ' + wo.workOrderNumber" subtitle="Review the completed work and record your decision">
+    <a actions mat-stroked-button routerLink="/verifications">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </a>
+  </app-page-header>
+
+  <div class="bar">
+    <div class="bar__status"><span class="bar__label">Work order status</span><app-status-chip [status]="wo.status" /></div>
+    <button mat-flat-button class="verify-btn" (click)="openVerifyDialog()" [disabled]="!canVerify()">
+      <mat-icon>rate_review</mat-icon>
+      Verify Work
+    </button>
+  </div>
+  @if (!canVerify()) {
+    <div class="note"><mat-icon>info</mat-icon><span>This work order is not awaiting verification (status: {{ wo.status }}).</span></div>
+  }
+
+  <div class="grid">
+    <!-- Incident details -->
+    <section class="card">
+      <h2 class="card__title"><mat-icon>report_problem</mat-icon> Incident Details</h2>
+      @if (incident(); as inc) {
+        <dl class="facts">
+          <div><dt>Number</dt><dd class="mono">{{ inc.incidentNumber }}</dd></div>
+          <div><dt>Business Unit</dt><dd>{{ inc.businessUnit }}</dd></div>
+          <div><dt>Facility</dt><dd>{{ inc.facilityName || '—' }}</dd></div>
+          <div><dt>Location</dt><dd>{{ inc.locationName || '—' }}</dd></div>
+          <div><dt>Reported</dt><dd>{{ inc.incidentDate | date: 'mediumDate' }}</dd></div>
+          <div><dt>Status</dt><dd><app-status-chip [status]="inc.status" /></dd></div>
+        </dl>
+        <p class="desc">{{ inc.description }}</p>
+      } @else {
+        <p class="muted">Incident details unavailable.</p>
+      }
+    </section>
+
+    <!-- Inspection details -->
+    <section class="card">
+      <h2 class="card__title"><mat-icon>fact_check</mat-icon> Inspection Details</h2>
+      @if (inspection(); as insp) {
+        <dl class="facts">
+          <div><dt>Classification</dt><dd><app-status-chip [status]="insp.classification" /></dd></div>
+          <div><dt>Inspected</dt><dd>{{ insp.inspectionDate | date: 'mediumDate' }}</dd></div>
+          <div><dt>Requires Vendor</dt><dd>{{ insp.requiresVendor ? 'Yes' : 'No' }}</dd></div>
+        </dl>
+        <p class="desc">{{ insp.comments }}</p>
+      } @else {
+        <p class="muted">No inspection on record.</p>
+      }
+    </section>
+
+    <!-- Work order -->
+    <section class="card">
+      <h2 class="card__title"><mat-icon>engineering</mat-icon> Work Order</h2>
+      <dl class="facts">
+        <div><dt>Number</dt><dd class="mono">{{ wo.workOrderNumber }}</dd></div>
+        <div><dt>Vendor</dt><dd>{{ wo.vendorName || '—' }}</dd></div>
+        <div><dt>Created</dt><dd>{{ wo.createdDate | date: 'mediumDate' }}</dd></div>
+        <div><dt>Completed</dt><dd>{{ wo.completedDate ? (wo.completedDate | date: 'mediumDate') : '—' }}</dd></div>
+      </dl>
+      @if (wo.description) { <p class="desc">{{ wo.description }}</p> }
+    </section>
+
+    <!-- Verification history -->
+    <section class="card">
+      <h2 class="card__title"><mat-icon>history</mat-icon> Verification History</h2>
+      @if (history().length === 0) {
+        <p class="muted">No prior verification decisions.</p>
+      } @else {
+        <ul class="hist">
+          @for (v of history(); track v.id) {
+            <li>
+              <app-status-chip [status]="v.decision" />
+              <span class="hist__date">{{ v.verificationDate | date: 'medium' }}</span>
+              @if (v.comments) { <span class="hist__note">{{ v.comments }}</span> }
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+
+  <!-- Vendor evidence (full width) -->
+  <section class="card card--full">
+    <h2 class="card__title"><mat-icon>photo_library</mat-icon> Vendor Evidence</h2>
+    @if (evidenceRestricted()) {
+      <div class="restricted"><mat-icon>lock</mat-icon><span>Detailed vendor evidence is available to administrators.</span></div>
+    } @else if (vendorUpdates().length === 0) {
+      <p class="muted">No vendor updates recorded.</p>
+    } @else {
+      <ol class="evidence">
+        @for (u of vendorUpdates(); track u.id) {
+          <li class="ev" [class.ev--complete]="u.isCompletionUpdate">
+            <div class="ev__dot"><mat-icon>{{ u.isCompletionUpdate ? 'check' : 'sync' }}</mat-icon></div>
+            <div class="ev__body">
+              <div class="ev__row">
+                <span class="ev__title">
+                  @if (u.isCompletionUpdate) { Completion } @else { Progress @if (u.progressPercentage != null) { · {{ u.progressPercentage }}% } }
+                </span>
+                <span class="ev__time">{{ u.updatedDate | date: 'medium' }}</span>
+              </div>
+              <p class="ev__text">{{ u.isCompletionUpdate ? u.completionComment : u.progressComment }}</p>
+              @if (u.attachments.length) {
+                <div class="ev__files">
+                  @for (f of u.attachments; track f.id) {
+                    <button class="chip-file" (click)="download(f)" [disabled]="downloadingId() === f.id">
+                      <mat-icon>attach_file</mat-icon>{{ f.fileName }}
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          </li>
+        }
+      </ol>
+    }
+  </section>
+}

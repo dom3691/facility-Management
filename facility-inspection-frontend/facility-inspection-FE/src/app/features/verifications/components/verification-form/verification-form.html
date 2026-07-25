@@ -1,0 +1,72 @@
+<h2 mat-dialog-title>Verify Work</h2>
+
+<mat-dialog-content>
+  <p class="sub">Work order <span class="mono">{{ data.workOrderNumber || data.workOrderId }}</span></p>
+
+  @if (error(); as err) {
+    <div class="alert" role="alert"><mat-icon>error_outline</mat-icon><span>{{ err }}</span></div>
+  }
+
+  <div class="choices">
+    <button
+      type="button"
+      class="choice choice--fixed"
+      [class.choice--selected]="decision() === 'Fixed'"
+      (click)="select('Fixed')"
+    >
+      <mat-icon>check_circle</mat-icon>
+      <span class="choice__title">Fixed</span>
+      <span class="choice__desc">Work is satisfactory — close the incident.</span>
+    </button>
+
+    <button
+      type="button"
+      class="choice choice--notfixed"
+      [class.choice--selected]="decision() === 'NotFixed'"
+      (click)="select('NotFixed')"
+    >
+      <mat-icon>cancel</mat-icon>
+      <span class="choice__title">Not Fixed</span>
+      <span class="choice__desc">Reopen the work order for the vendor.</span>
+    </button>
+  </div>
+  @if (form.controls.decision.touched && form.controls.decision.hasError('required')) {
+    <p class="choice-error">Please choose a decision.</p>
+  }
+
+  <form [formGroup]="form" novalidate>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>{{ decision() === 'NotFixed' ? 'Reason (required)' : 'Comments (optional)' }}</mat-label>
+      <textarea
+        matInput
+        rows="3"
+        formControlName="comments"
+        [placeholder]="decision() === 'NotFixed' ? 'Explain what still needs work…' : 'Any notes for the record…'"
+      ></textarea>
+      @if (form.controls.comments.hasError('required') && form.controls.comments.touched) {
+        <mat-error>A reason is required when rejecting.</mat-error>
+      }
+      @if (form.controls.comments.hasError('maxlength')) {
+        <mat-error>Comment is too long (max 1000 characters).</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close [disabled]="saving()">Cancel</button>
+  <button
+    mat-flat-button
+    class="confirm-btn"
+    [class.confirm-btn--fixed]="decision() === 'Fixed'"
+    [class.confirm-btn--notfixed]="decision() === 'NotFixed'"
+    (click)="submit()"
+    [disabled]="saving()"
+  >
+    @if (saving()) {
+      <span class="spinner-row"><mat-spinner diameter="18" /><span>Submitting…</span></span>
+    } @else {
+      {{ confirmLabel() }}
+    }
+  </button>
+</mat-dialog-actions>

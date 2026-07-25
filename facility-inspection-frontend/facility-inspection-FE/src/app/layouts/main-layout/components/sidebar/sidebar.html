@@ -1,0 +1,58 @@
+<div class="sb">
+  <div class="sb__brand" [class.sb__brand--rail]="layout.rail()">
+    @if (layout.rail()) {
+      <!-- Rail: compact mark (the full lockup is too wide for 72px). -->
+      <div class="sb__mark">FI</div>
+    } @else {
+      <img
+        class="sb__logo"
+        src="dangote-logo.png"
+        alt="Dangote Group"
+        width="150"
+        height="76"
+      />
+      <span class="sb__subtitle">Facility Inspection · Automation System</span>
+    }
+  </div>
+
+  <nav class="sb__nav">
+    @for (group of visibleGroups(); track group.heading) {
+      <div class="sb__group">
+        @if (!layout.rail()) {
+          <p class="sb__heading">{{ group.heading }}</p>
+        }
+        @for (item of group.items; track item.route) {
+          <a
+            class="sb__item"
+            [class.sb__item--rail]="layout.rail()"
+            [routerLink]="item.route"
+            routerLinkActive="sb__item--active"
+            (click)="onNavigate()"
+            [matTooltip]="layout.rail() ? item.label : ''"
+            matTooltipPosition="right"
+          >
+            <mat-icon>{{ item.icon }}</mat-icon>
+            @if (!layout.rail()) {
+              <span class="sb__label">{{ item.label }}</span>
+            }
+          </a>
+        }
+      </div>
+    }
+  </nav>
+
+  @if (!layout.isMobile()) {
+    <div class="sb__foot">
+      <button
+        mat-icon-button
+        class="sb__collapse"
+        (click)="layout.toggleSidebar()"
+        [matTooltip]="layout.rail() ? 'Expand' : 'Collapse'"
+        matTooltipPosition="right"
+        [attr.aria-label]="layout.rail() ? 'Expand sidebar' : 'Collapse sidebar'"
+      >
+        <mat-icon>{{ layout.rail() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+      </button>
+    </div>
+  }
+</div>

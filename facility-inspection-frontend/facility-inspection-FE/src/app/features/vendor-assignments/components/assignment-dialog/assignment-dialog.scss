@@ -1,0 +1,52 @@
+.dialog-sub {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  color: var(--brand-muted);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  color: var(--brand-navy);
+}
+
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  background: #fdecec;
+  color: #b3261e;
+  font-size: 0.83rem;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  min-width: 360px;
+
+  @media (max-width: 480px) {
+    min-width: auto;
+  }
+}
+
+.full {
+  width: 100%;
+}
+
+.assign-btn {
+  --mat-sys-primary: var(--brand-navy);
+
+  .spinner-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}

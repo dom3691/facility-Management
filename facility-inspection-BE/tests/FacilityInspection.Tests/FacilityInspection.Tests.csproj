@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    TEST PROJECT
+    Unit tests (Domain / Application) and integration tests (API via WebApplicationFactory).
+    References the projects under test. Versions are managed centrally in
+    ../../Directory.Packages.props.
+  -->
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FacilityInspection.Application\FacilityInspection.Application.csproj" />
+    <ProjectReference Include="..\..\src\FacilityInspection.Domain\FacilityInspection.Domain.csproj" />
+    <ProjectReference Include="..\..\src\FacilityInspection.API\FacilityInspection.API.csproj" />
+  </ItemGroup>
+
+</Project>

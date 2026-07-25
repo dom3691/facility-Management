@@ -1,0 +1,86 @@
+// =============================================================================
+// Global styles + Angular Material (M3) theme
+// -----------------------------------------------------------------------------
+// The Material theme provides component tokens; the brand design tokens below
+// (pulled from the approved prototype) are exposed as CSS custom properties so
+// layouts/features can use them directly. A fully custom M3 palette generated
+// from the brand colours can replace the built-in palettes later.
+// =============================================================================
+
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light;
+
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: (
+        plain-family: 'Inter, sans-serif',
+        brand-family: 'Outfit, sans-serif',
+        bold-weight: 700,
+        medium-weight: 600,
+      ),
+      density: 0,
+    )
+  );
+}
+
+:root {
+  // --- Brand palette (from prototype) ---
+  --brand-navy: #0d1b4b; // sidebar + primary text
+  --brand-rust: #c74b30; // Dangote accent
+  --brand-blue: #2563eb; // secondary accent
+  --brand-canvas: #f4f6fb; // app background
+  --brand-surface: #ffffff; // cards / panels
+  --brand-muted: #9ca3af; // secondary text
+
+  // --- Status colours ---
+  --status-open: #2563eb;
+  --status-in-progress: #d97706;
+  --status-pending: #ca8a04;
+  --status-closed: #16a34a;
+  --status-critical: #dc2626;
+
+  // --- Typography ---
+  --font-sans: 'Inter', sans-serif;
+  --font-heading: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  // --- Layout metrics ---
+  --sidebar-width: 260px;
+  --toolbar-height: 64px;
+  --radius-card: 14px;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--brand-canvas);
+  color: var(--brand-navy);
+  font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3,
+h4,
+.heading {
+  font-family: var(--font-heading);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+* {
+  box-sizing: border-box;
+}

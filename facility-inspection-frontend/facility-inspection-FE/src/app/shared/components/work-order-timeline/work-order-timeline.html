@@ -1,0 +1,24 @@
+@if (rejected()) {
+  <div class="rejected">
+    <mat-icon>block</mat-icon>
+    <span>This work order was rejected.</span>
+  </div>
+} @else {
+  <ol class="wt">
+    @for (step of steps(); track step.label; let last = $last) {
+      <li class="wt__step" [attr.data-state]="step.state" [class.wt__step--last]="last">
+        <div class="wt__marker">
+          <mat-icon>{{ step.state === 'done' ? 'check' : step.icon }}</mat-icon>
+        </div>
+        <div class="wt__body">
+          <span class="wt__label">{{ step.label }}</span>
+          @if (step.date) {
+            <span class="wt__date">{{ step.date | date: 'medium' }}</span>
+          } @else if (step.state === 'active') {
+            <span class="wt__date wt__date--muted">In progress</span>
+          }
+        </div>
+      </li>
+    }
+  </ol>
+}

@@ -1,0 +1,108 @@
+<app-page-header title="Report Incident" subtitle="Log a new facility incident for review">
+  <a actions mat-stroked-button routerLink="/incidents">
+    <mat-icon>arrow_back</mat-icon>
+    Back to list
+  </a>
+</app-page-header>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="form-card" novalidate>
+  @if (serverError(); as error) {
+    <div class="alert" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+  }
+
+  <div class="grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Business Unit</mat-label>
+      <mat-select formControlName="businessUnit">
+        @for (unit of businessUnits; track unit) {
+          <mat-option [value]="unit">{{ unit }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.businessUnit.touched && form.controls.businessUnit.hasError('required')) {
+        <mat-error>Business unit is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>SAP ID</mat-label>
+      <input matInput formControlName="sapId" placeholder="SAP-1001" />
+      @if (form.controls.sapId.touched && form.controls.sapId.hasError('required')) {
+        <mat-error>SAP ID is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Facility</mat-label>
+      <mat-select formControlName="facilityId">
+        @for (facility of facilities(); track facility.id) {
+          <mat-option [value]="facility.id">{{ facility.name }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.facilityId.touched && form.controls.facilityId.hasError('required')) {
+        <mat-error>Facility is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Location</mat-label>
+      <mat-select formControlName="locationId">
+        @for (location of locations(); track location.id) {
+          <mat-option [value]="location.id">{{ location.name }}</mat-option>
+        }
+      </mat-select>
+      @if (loadingLocations()) {
+        <mat-hint>Loading locations…</mat-hint>
+      } @else if (!form.controls.facilityId.value) {
+        <mat-hint>Select a facility first</mat-hint>
+      }
+      @if (form.controls.locationId.touched && form.controls.locationId.hasError('required')) {
+        <mat-error>Location is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Incident Date</mat-label>
+      <input matInput [matDatepicker]="picker" [max]="maxDate" formControlName="incidentDate" />
+      <mat-datepicker-toggle matSuffix [for]="picker" />
+      <mat-datepicker #picker />
+      @if (form.controls.incidentDate.touched && form.controls.incidentDate.hasError('required')) {
+        <mat-error>Incident date is required.</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Description</mat-label>
+    <textarea
+      matInput
+      rows="4"
+      formControlName="description"
+      placeholder="Describe what happened, where, and any immediate risk…"
+    ></textarea>
+    @if (form.controls.description.touched && form.controls.description.hasError('required')) {
+      <mat-error>Description is required.</mat-error>
+    }
+    @if (form.controls.description.hasError('maxlength')) {
+      <mat-error>Description is too long (max 2000 characters).</mat-error>
+    }
+  </mat-form-field>
+
+  <div class="field-block">
+    <label class="field-block__label">Attachments (optional)</label>
+    <app-file-drop (filesChange)="onFilesChange($event)" />
+  </div>
+
+  <div class="actions">
+    <a mat-button routerLink="/incidents">Cancel</a>
+    <button mat-flat-button type="submit" class="submit-btn" [disabled]="loading()">
+      @if (loading()) {
+        <span class="spinner-row"><mat-spinner diameter="20" /><span>Submitting…</span></span>
+      } @else {
+        Submit Incident Report
+      }
+    </button>
+  </div>
+</form>

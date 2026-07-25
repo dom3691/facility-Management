@@ -1,0 +1,44 @@
+<button
+  class="um__trigger"
+  mat-button
+  [matMenuTriggerFor]="menu"
+  aria-label="Open user menu"
+>
+  <span class="um__avatar">{{ initials() }}</span>
+  <span class="um__meta">
+    <span class="um__name">{{ user()?.fullName || 'Account' }}</span>
+    <span class="um__role">{{ primaryRole() }}</span>
+  </span>
+  <mat-icon class="um__caret">expand_more</mat-icon>
+</button>
+
+<mat-menu #menu="matMenu" xPosition="before" class="um__menu">
+  <div class="um__header" (click)="$event.stopPropagation()">
+    <div class="um__avatar um__avatar--lg">{{ initials() }}</div>
+    <div>
+      <p class="um__header-name">{{ user()?.fullName }}</p>
+      <p class="um__header-email">{{ user()?.email }}</p>
+      @if (primaryRole()) {
+        <span class="um__badge">{{ primaryRole() }}</span>
+      }
+    </div>
+  </div>
+
+  <mat-divider />
+
+  <button mat-menu-item disabled>
+    <mat-icon>person</mat-icon>
+    <span>My profile</span>
+  </button>
+  <button mat-menu-item disabled>
+    <mat-icon>settings</mat-icon>
+    <span>Settings</span>
+  </button>
+
+  <mat-divider />
+
+  <button mat-menu-item (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    <span>Sign out</span>
+  </button>
+</mat-menu>

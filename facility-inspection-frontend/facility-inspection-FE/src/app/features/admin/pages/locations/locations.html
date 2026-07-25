@@ -1,0 +1,37 @@
+<app-page-header title="Locations" subtitle="Areas within each facility">
+  <button actions mat-flat-button class="brand-btn" (click)="add()" [disabled]="facilities().length === 0">
+    <mat-icon>add</mat-icon>
+    Add Location
+  </button>
+</app-page-header>
+
+<div class="panel">
+  <div class="toolbar">
+    <mat-form-field appearance="outline" class="toolbar__search" subscriptSizing="dynamic">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput type="search" placeholder="Search locations…" [ngModel]="search()" (ngModelChange)="search.set($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="toolbar__filter" subscriptSizing="dynamic">
+      <mat-label>Facility</mat-label>
+      <mat-select [ngModel]="facilityFilter()" (ngModelChange)="facilityFilter.set($event)">
+        <mat-option value="">All facilities</mat-option>
+        @for (f of facilities(); track f.id) {
+          <mat-option [value]="f.id">{{ f.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  @if (loading()) {
+    <div class="state"><mat-spinner diameter="36" /><p>Loading…</p></div>
+  } @else if (error()) {
+    <div class="state state--error">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-flat-button (click)="load()">Try again</button>
+    </div>
+  } @else {
+    <app-data-table [columns]="columns" [rows]="visibleRows()" emptyMessage="No locations found." />
+  }
+</div>

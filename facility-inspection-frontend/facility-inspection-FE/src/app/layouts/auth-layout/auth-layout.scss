@@ -1,0 +1,36 @@
+.auth {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.12), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(199, 75, 48, 0.12), transparent 40%),
+    var(--brand-navy);
+
+  /* White logo artwork — sits on the navy backdrop, above the white card. */
+  &__logo {
+    width: 200px;
+    height: auto;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  &__panel {
+    width: 100%;
+    max-width: 420px;
+    background: var(--brand-surface);
+    border-radius: var(--radius-card);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    padding: 2rem;
+  }
+
+  &__footer {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.78rem;
+    margin: 0;
+  }
+}

@@ -1,0 +1,60 @@
+<app-page-header title="Verifications" subtitle="Completed work orders awaiting your verification" />
+
+<div class="panel">
+  @if (loading()) {
+    <div class="state"><mat-spinner diameter="36" /><p>Loading…</p></div>
+  } @else if (error()) {
+    <div class="state state--error">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-flat-button (click)="load()">Try again</button>
+    </div>
+  } @else {
+    <div class="table-wrap">
+      <table mat-table [dataSource]="items()" class="grid">
+        <ng-container matColumnDef="workOrderNumber">
+          <th mat-header-cell *matHeaderCellDef>Work Order No</th>
+          <td mat-cell *matCellDef="let row"><span class="mono">{{ row.workOrderNumber }}</span></td>
+        </ng-container>
+        <ng-container matColumnDef="incident">
+          <th mat-header-cell *matHeaderCellDef>Incident</th>
+          <td mat-cell *matCellDef="let row"><span class="mono">{{ row.incidentNumber || '—' }}</span></td>
+        </ng-container>
+        <ng-container matColumnDef="vendor">
+          <th mat-header-cell *matHeaderCellDef>Vendor</th>
+          <td mat-cell *matCellDef="let row">{{ row.vendorName || '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="completed">
+          <th mat-header-cell *matHeaderCellDef>Completed</th>
+          <td mat-cell *matCellDef="let row">{{ row.completedDate ? (row.completedDate | date: 'mediumDate') : '—' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let row">
+            <a mat-flat-button class="review-btn" [routerLink]="['/verifications', row.id]">
+              <mat-icon>rate_review</mat-icon> Review
+            </a>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns"></tr>
+      </table>
+
+      @if (items().length === 0) {
+        <div class="empty">
+          <mat-icon>verified</mat-icon>
+          <p>Nothing is awaiting verification.</p>
+        </div>
+      }
+    </div>
+
+    <mat-paginator
+      [length]="total()"
+      [pageSize]="pageSize()"
+      [pageIndex]="pageIndex()"
+      [pageSizeOptions]="[10, 20, 50]"
+      (page)="onPage($event)"
+      showFirstLastButtons
+    />
+  }
+</div>

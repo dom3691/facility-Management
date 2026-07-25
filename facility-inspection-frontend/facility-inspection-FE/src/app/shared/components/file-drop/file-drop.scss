@@ -1,0 +1,110 @@
+.drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 1.75rem 1rem;
+  border: 1.5px dashed rgba(13, 27, 75, 0.22);
+  border-radius: 12px;
+  background: var(--brand-canvas);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    border-color: var(--brand-blue);
+  }
+
+  &--active {
+    border-color: var(--brand-blue);
+    background: #eff4ff;
+  }
+
+  &__icon {
+    font-size: 30px;
+    width: 30px;
+    height: 30px;
+    color: var(--brand-blue);
+  }
+
+  &__title {
+    margin: 0.3rem 0 0;
+    font-size: 0.9rem;
+    color: var(--brand-navy);
+  }
+
+  &__link {
+    color: var(--brand-blue);
+    font-weight: 600;
+  }
+
+  &__hint {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--brand-muted);
+  }
+}
+
+.drop__rejected {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--status-critical);
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.drop__list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.drop__file {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(13, 27, 75, 0.08);
+  border-radius: 10px;
+  background: var(--brand-surface);
+}
+
+.drop__file-icon {
+  color: var(--brand-blue);
+}
+
+.drop__file-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.drop__file-name {
+  font-size: 0.85rem;
+  color: var(--brand-navy);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.drop__file-size {
+  font-size: 0.72rem;
+  color: var(--brand-muted);
+}

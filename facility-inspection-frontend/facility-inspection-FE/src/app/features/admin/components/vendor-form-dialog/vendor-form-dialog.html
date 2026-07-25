@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit Vendor' : 'Add Vendor' }}</h2>
+
+<mat-dialog-content>
+  @if (error(); as err) {
+    <div class="alert" role="alert"><span>{{ err }}</span></div>
+  }
+
+  <form [formGroup]="form" class="form" novalidate>
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Vendor name</mat-label>
+      <input matInput formControlName="vendorName" />
+      @if (form.controls.vendorName.touched && form.controls.vendorName.hasError('required')) {
+        <mat-error>Vendor name is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="vendorCategory">
+        @for (c of categories; track c.value) {
+          <mat-option [value]="c.value">{{ c.label }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.vendorCategory.touched && form.controls.vendorCategory.hasError('required')) {
+        <mat-error>Category is required.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="grid-2">
+      <mat-form-field appearance="outline">
+        <mat-label>Contact person</mat-label>
+        <input matInput formControlName="contactPerson" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Phone</mat-label>
+        <input matInput formControlName="phoneNumber" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" />
+      @if (form.controls.email.hasError('email')) {
+        <mat-error>Enter a valid email address.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="isActive" color="primary">Active</mat-slide-toggle>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close [disabled]="saving()">Cancel</button>
+  <button mat-flat-button class="save-btn" (click)="submit()" [disabled]="saving()">
+    @if (saving()) {
+      <span class="spinner-row"><mat-spinner diameter="18" /><span>Saving…</span></span>
+    } @else {
+      {{ isEdit ? 'Save Changes' : 'Create Vendor' }}
+    }
+  </button>
+</mat-dialog-actions>

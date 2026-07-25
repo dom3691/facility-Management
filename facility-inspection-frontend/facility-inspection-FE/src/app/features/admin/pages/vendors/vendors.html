@@ -1,0 +1,60 @@
+<app-page-header title="Vendors" subtitle="Manage service providers">
+  <button actions mat-flat-button class="brand-btn" (click)="add()">
+    <mat-icon>add</mat-icon>
+    Add Vendor
+  </button>
+</app-page-header>
+
+<div class="panel">
+  <div class="toolbar">
+    <mat-form-field appearance="outline" class="toolbar__search" subscriptSizing="dynamic">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput type="search" placeholder="Search name, contact, email…" [ngModel]="search()" (ngModelChange)="search.set($event)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="toolbar__filter" subscriptSizing="dynamic">
+      <mat-label>Category</mat-label>
+      <mat-select [ngModel]="categoryFilter()" (ngModelChange)="categoryFilter.set($event); onFilterChange()">
+        <mat-option value="">All categories</mat-option>
+        @for (c of categories; track c.value) {
+          <mat-option [value]="c.value">{{ c.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="toolbar__filter" subscriptSizing="dynamic">
+      <mat-label>Status</mat-label>
+      <mat-select [ngModel]="activeFilter()" (ngModelChange)="activeFilter.set($event); onFilterChange()">
+        <mat-option value="">All</mat-option>
+        <mat-option value="true">Active</mat-option>
+        <mat-option value="false">Inactive</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  @if (loading()) {
+    <div class="state"><mat-spinner diameter="36" /><p>Loading vendors…</p></div>
+  } @else if (error()) {
+    <div class="state state--error">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-flat-button (click)="load()">Try again</button>
+    </div>
+  } @else {
+    <app-data-table [columns]="columns" [rows]="visibleRows()" [actions]="actionsTpl" emptyMessage="No vendors found." />
+
+    <ng-template #actionsTpl let-vendor>
+      <button mat-icon-button matTooltip="Edit" (click)="edit(vendor)"><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button matTooltip="Delete" (click)="remove(vendor)"><mat-icon>delete</mat-icon></button>
+    </ng-template>
+
+    <mat-paginator
+      [length]="total()"
+      [pageSize]="pageSize()"
+      [pageIndex]="pageIndex()"
+      [pageSizeOptions]="[10, 20, 50]"
+      (page)="onPage($event)"
+      showFirstLastButtons
+    />
+  }
+</div>

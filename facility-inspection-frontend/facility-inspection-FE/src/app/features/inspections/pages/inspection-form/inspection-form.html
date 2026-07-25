@@ -1,0 +1,74 @@
+<app-page-header title="Record Inspection" subtitle="Classify the incident and add your findings">
+  <a actions mat-stroked-button routerLink="/inspections">
+    <mat-icon>arrow_back</mat-icon>
+    Back to queue
+  </a>
+</app-page-header>
+
+@if (incident(); as inc) {
+  <div class="context">
+    <div class="context__row">
+      <span class="context__num mono">{{ inc.incidentNumber }}</span>
+      <span class="context__bu">{{ inc.businessUnit }}</span>
+    </div>
+    <div class="context__meta">
+      <span><mat-icon>apartment</mat-icon> {{ inc.facilityName || '—' }}</span>
+      <span><mat-icon>place</mat-icon> {{ inc.locationName || '—' }}</span>
+    </div>
+    <p class="context__desc">{{ inc.description }}</p>
+  </div>
+}
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="form-card" novalidate>
+  @if (serverError(); as error) {
+    <div class="alert" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+  }
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Classification</mat-label>
+    <mat-select formControlName="classification">
+      @for (c of classifications; track c.value) {
+        <mat-option [value]="c.value">{{ c.label }}</mat-option>
+      }
+    </mat-select>
+    <mat-hint>Anything other than “Good” routes the incident to vendor assignment.</mat-hint>
+    @if (form.controls.classification.touched && form.controls.classification.hasError('required')) {
+      <mat-error>Classification is required.</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Comments</mat-label>
+    <textarea
+      matInput
+      rows="4"
+      formControlName="comments"
+      placeholder="Describe the condition, cause, and any recommended action…"
+    ></textarea>
+    @if (form.controls.comments.touched && form.controls.comments.hasError('required')) {
+      <mat-error>Comments are required.</mat-error>
+    }
+    @if (form.controls.comments.hasError('maxlength')) {
+      <mat-error>Comments are too long (max 2000 characters).</mat-error>
+    }
+  </mat-form-field>
+
+  <div class="field-block">
+    <label class="field-block__label">Photos / documents (optional)</label>
+    <app-file-drop (filesChange)="onFilesChange($event)" />
+  </div>
+
+  <div class="actions">
+    <a mat-button routerLink="/inspections">Cancel</a>
+    <button mat-flat-button type="submit" class="submit-btn" [disabled]="loading() || loadingIncident()">
+      @if (loading()) {
+        <span class="spinner-row"><mat-spinner diameter="20" /><span>Submitting…</span></span>
+      } @else {
+        Submit Inspection
+      }
+    </button>
+  </div>
+</form>

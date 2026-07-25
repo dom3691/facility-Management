@@ -1,0 +1,212 @@
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 3.5rem 1rem;
+  color: var(--brand-muted);
+
+  p { margin: 0; }
+
+  &--error mat-icon {
+    color: var(--status-critical);
+    font-size: 34px;
+    width: 34px;
+    height: 34px;
+  }
+}
+
+// --- Job bucket tiles ---
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+
+  @media (max-width: 720px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 1rem 1.1rem;
+  background: var(--brand-surface);
+  border: 1px solid rgba(13, 27, 75, 0.08);
+  border-radius: var(--radius-card);
+  box-shadow: 0 1px 2px rgba(13, 27, 75, 0.04);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    box-shadow: 0 6px 18px rgba(13, 27, 75, 0.08);
+  }
+
+  &--active {
+    border-color: var(--brand-navy);
+    box-shadow: 0 0 0 1px var(--brand-navy);
+  }
+
+  &__value {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--brand-navy);
+    line-height: 1;
+  }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    color: var(--brand-muted);
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &--assigned .tile__label mat-icon { color: #2563eb; }
+  &--active-job .tile__label mat-icon { color: #d97706; }
+  &--completed .tile__label mat-icon { color: #16a34a; }
+}
+
+// --- Toolbar (view toggle) ---
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  &__count {
+    font-size: 0.82rem;
+    color: var(--brand-muted);
+  }
+}
+
+// --- Card view ---
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.job {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.1rem;
+  background: var(--brand-surface);
+  border: 1px solid rgba(13, 27, 75, 0.06);
+  border-radius: var(--radius-card);
+  box-shadow: 0 1px 2px rgba(13, 27, 75, 0.04);
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  &__num {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--brand-navy);
+  }
+
+  &__facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin: 0;
+
+    dt {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--brand-muted);
+    }
+
+    dd {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--brand-navy);
+    }
+  }
+
+  &__desc {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--brand-muted);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__btn {
+    --mat-sys-primary: var(--brand-navy);
+    align-self: flex-start;
+  }
+}
+
+// --- Table view ---
+.panel {
+  background: var(--brand-surface);
+  border: 1px solid rgba(13, 27, 75, 0.06);
+  border-radius: var(--radius-card);
+  box-shadow: 0 1px 2px rgba(13, 27, 75, 0.04);
+  overflow: hidden;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.grid {
+  width: 100%;
+  background: transparent;
+
+  th.mat-mdc-header-cell {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--brand-muted);
+    font-weight: 600;
+  }
+
+  td.mat-mdc-cell {
+    color: var(--brand-navy);
+    font-size: 0.88rem;
+  }
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 3rem 1rem;
+  color: var(--brand-muted);
+
+  mat-icon {
+    font-size: 34px;
+    width: 34px;
+    height: 34px;
+  }
+
+  p { margin: 0; }
+}

@@ -1,0 +1,113 @@
+@if (loading()) {
+  <div class="state"><mat-spinner diameter="40" /><p>Loading inspection…</p></div>
+} @else if (error()) {
+  <div class="state state--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <a mat-flat-button routerLink="/inspections">Back to inspections</a>
+  </div>
+} @else if (inspection(); as insp) {
+  <app-page-header [title]="'Inspection · ' + (insp.incidentNumber || '')" subtitle="Inspection detail">
+    <a actions mat-stroked-button routerLink="/inspections">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </a>
+  </app-page-header>
+
+  <!-- Status timeline -->
+  @if (insp.incidentStatus) {
+    <section class="card">
+      <h2 class="card__title">Status Timeline</h2>
+      <app-status-timeline [status]="insp.incidentStatus" />
+    </section>
+  }
+
+  <div class="detail-grid">
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Findings</h2>
+        <app-status-chip [status]="insp.classification" />
+      </div>
+
+      <dl class="facts">
+        <div class="fact">
+          <dt>Incident</dt>
+          <dd class="mono">{{ insp.incidentNumber || insp.incidentId }}</dd>
+        </div>
+        <div class="fact">
+          <dt>Inspected</dt>
+          <dd>{{ insp.inspectionDate | date: 'medium' }}</dd>
+        </div>
+        <div class="fact">
+          <dt>Requires Vendor</dt>
+          <dd>{{ insp.requiresVendor ? 'Yes' : 'No' }}</dd>
+        </div>
+        <div class="fact">
+          <dt>Incident Status</dt>
+          <dd>@if (insp.incidentStatus) { <app-status-chip [status]="insp.incidentStatus" /> }</dd>
+        </div>
+      </dl>
+
+      <div class="comments">
+        <h3 class="comments__label">Comments</h3>
+        <p class="comments__text">{{ insp.comments }}</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <h2 class="card__title">Attachments</h2>
+        <span class="card__count">{{ insp.attachments.length }}</span>
+      </div>
+
+      @if (insp.attachments.length === 0) {
+        <div class="empty"><mat-icon>attachment</mat-icon><p>No attachments</p></div>
+      } @else {
+        <ul class="files">
+          @for (file of insp.attachments; track file.id) {
+            <li class="file">
+              <mat-icon class="file__icon">description</mat-icon>
+              <div class="file__meta">
+                <span class="file__name">{{ file.fileName }}</span>
+                <span class="file__size">{{ formatSize(file.fileSizeBytes) }}</span>
+              </div>
+              <button mat-icon-button aria-label="Download" (click)="download(file)" [disabled]="downloadingId() === file.id">
+                @if (downloadingId() === file.id) { <mat-spinner diameter="18" /> } @else { <mat-icon>download</mat-icon> }
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+
+  <!-- Audit trail -->
+  <section class="card">
+    <h2 class="card__title">Audit Trail</h2>
+    @if (!isAdmin) {
+      <div class="audit-note">
+        <mat-icon>lock</mat-icon>
+        <span>The full audit trail is available to administrators.</span>
+      </div>
+    } @else if (auditLoading()) {
+      <div class="state"><mat-spinner diameter="28" /></div>
+    } @else if (auditEntries().length === 0) {
+      <div class="empty"><mat-icon>history</mat-icon><p>No audit entries for this incident.</p></div>
+    } @else {
+      <ol class="audit">
+        @for (entry of auditEntries(); track entry.id) {
+          <li class="audit__item">
+            <div class="audit__dot"></div>
+            <div class="audit__body">
+              <div class="audit__row">
+                <span class="audit__action">{{ humanizeAction(entry.action) }}</span>
+                <span class="audit__time">{{ entry.performedDate | date: 'medium' }}</span>
+              </div>
+              <span class="audit__by">{{ entry.performedByName || 'System' }}</span>
+            </div>
+          </li>
+        }
+      </ol>
+    }
+  </section>
+}

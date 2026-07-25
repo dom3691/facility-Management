@@ -1,0 +1,22 @@
+<mat-toolbar class="tn">
+  <button
+    mat-icon-button
+    class="tn__toggle"
+    (click)="layout.toggleSidebar()"
+    aria-label="Toggle navigation"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <span class="tn__crumb">Dangote · FIAS</span>
+
+  <label class="tn__search">
+    <mat-icon>search</mat-icon>
+    <input type="search" placeholder="Search incidents, work orders, vendors…" aria-label="Search" />
+  </label>
+
+  <span class="tn__spacer"></span>
+
+  <app-notification-bell />
+  <app-user-menu />
+</mat-toolbar>

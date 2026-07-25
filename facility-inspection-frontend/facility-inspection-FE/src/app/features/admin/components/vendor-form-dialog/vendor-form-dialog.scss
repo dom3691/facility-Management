@@ -1,0 +1,46 @@
+.alert {
+  margin-bottom: 1rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  background: #fdecec;
+  color: #b3261e;
+  font-size: 0.83rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  min-width: 380px;
+
+  @media (max-width: 480px) {
+    min-width: auto;
+  }
+}
+
+.full {
+  width: 100%;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 0.75rem;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.save-btn {
+  --mat-sys-primary: var(--brand-navy);
+
+  .spinner-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}

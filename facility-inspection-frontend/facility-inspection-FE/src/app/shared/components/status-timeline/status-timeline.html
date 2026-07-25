@@ -1,0 +1,20 @@
+@if (cancelled()) {
+  <div class="cancelled">
+    <mat-icon>cancel</mat-icon>
+    <span>This incident was cancelled.</span>
+  </div>
+} @else {
+  <ol class="timeline">
+    @for (stage of stages(); track stage.label; let last = $last) {
+      <li class="timeline__step" [attr.data-state]="stage.state">
+        <div class="timeline__marker">
+          <mat-icon>{{ stage.state === 'done' ? 'check' : stage.icon }}</mat-icon>
+        </div>
+        <span class="timeline__label">{{ stage.label }}</span>
+        @if (!last) {
+          <span class="timeline__bar"></span>
+        }
+      </li>
+    }
+  </ol>
+}

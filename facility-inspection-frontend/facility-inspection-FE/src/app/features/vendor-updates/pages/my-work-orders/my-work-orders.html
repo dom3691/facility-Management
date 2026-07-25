@@ -1,0 +1,103 @@
+<app-page-header title="My Work Orders" subtitle="Jobs assigned to your vendor" />
+
+@if (loading()) {
+  <div class="state"><mat-spinner diameter="40" /><p>Loading your jobs…</p></div>
+} @else if (error()) {
+  <div class="state state--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <button mat-flat-button (click)="load()">Try again</button>
+  </div>
+} @else {
+  <!-- Job buckets (also act as filters) -->
+  <div class="tiles">
+    <button class="tile" [class.tile--active]="bucket() === 'all'" (click)="setBucket('all')">
+      <span class="tile__value">{{ items().length }}</span>
+      <span class="tile__label"><mat-icon>work</mat-icon> All Jobs</span>
+    </button>
+    <button class="tile tile--assigned" [class.tile--active]="bucket() === 'assigned'" (click)="setBucket('assigned')">
+      <span class="tile__value">{{ assignedJobs().length }}</span>
+      <span class="tile__label"><mat-icon>assignment</mat-icon> Assigned Jobs</span>
+    </button>
+    <button class="tile tile--active-job" [class.tile--active]="bucket() === 'active'" (click)="setBucket('active')">
+      <span class="tile__value">{{ activeJobs().length }}</span>
+      <span class="tile__label"><mat-icon>engineering</mat-icon> Active Jobs</span>
+    </button>
+    <button class="tile tile--completed" [class.tile--active]="bucket() === 'completed'" (click)="setBucket('completed')">
+      <span class="tile__value">{{ completedJobs().length }}</span>
+      <span class="tile__label"><mat-icon>task_alt</mat-icon> Completed Jobs</span>
+    </button>
+  </div>
+
+  <div class="toolbar">
+    <span class="toolbar__count">{{ visibleJobs().length }} shown</span>
+    <mat-button-toggle-group [value]="view()" (change)="view.set($event.value)" hideSingleSelectionIndicator aria-label="View mode">
+      <mat-button-toggle value="cards" aria-label="Card view"><mat-icon>grid_view</mat-icon></mat-button-toggle>
+      <mat-button-toggle value="table" aria-label="Table view"><mat-icon>table_rows</mat-icon></mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  @if (visibleJobs().length === 0) {
+    <div class="empty">
+      <mat-icon>inbox</mat-icon>
+      <p>No jobs in this view.</p>
+    </div>
+  } @else if (view() === 'cards') {
+    <!-- Card view -->
+    <div class="cards">
+      @for (job of visibleJobs(); track job.id) {
+        <article class="job">
+          <div class="job__head">
+            <span class="job__num mono">{{ job.workOrderNumber }}</span>
+            <app-status-chip [status]="job.status" />
+          </div>
+          <dl class="job__facts">
+            <div><dt>Incident</dt><dd class="mono">{{ job.incidentNumber || '—' }}</dd></div>
+            <div><dt>Created</dt><dd>{{ job.createdDate | date: 'mediumDate' }}</dd></div>
+          </dl>
+          @if (job.description) {
+            <p class="job__desc">{{ job.description }}</p>
+          }
+          <a mat-flat-button class="job__btn" [routerLink]="['/vendor-updates', job.id]">
+            <mat-icon>{{ isActionable(job.status) ? 'edit_note' : 'visibility' }}</mat-icon>
+            {{ isActionable(job.status) ? 'Post Update' : 'View' }}
+          </a>
+        </article>
+      }
+    </div>
+  } @else {
+    <!-- Table view -->
+    <div class="panel">
+      <div class="table-wrap">
+        <table mat-table [dataSource]="visibleJobs()" class="grid">
+          <ng-container matColumnDef="workOrderNumber">
+            <th mat-header-cell *matHeaderCellDef>Work Order No</th>
+            <td mat-cell *matCellDef="let row"><span class="mono">{{ row.workOrderNumber }}</span></td>
+          </ng-container>
+          <ng-container matColumnDef="incident">
+            <th mat-header-cell *matHeaderCellDef>Incident</th>
+            <td mat-cell *matCellDef="let row"><span class="mono">{{ row.incidentNumber || '—' }}</span></td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let row"><app-status-chip [status]="row.status" /></td>
+          </ng-container>
+          <ng-container matColumnDef="created">
+            <th mat-header-cell *matHeaderCellDef>Created</th>
+            <td mat-cell *matCellDef="let row">{{ row.createdDate | date: 'mediumDate' }}</td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let row">
+              <a mat-button [routerLink]="['/vendor-updates', row.id]">
+                {{ isActionable(row.status) ? 'Update' : 'View' }}
+              </a>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns"></tr>
+        </table>
+      </div>
+    </div>
+  }
+}

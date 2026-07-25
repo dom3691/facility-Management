@@ -1,0 +1,139 @@
+.sb {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1rem 0.65rem;
+  background: var(--brand-navy);
+  color: #fff;
+  overflow: hidden;
+}
+
+.sb__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.35rem 0.4rem 1.25rem;
+  min-height: 40px;
+
+  // Rail: centre the compact mark.
+  &--rail {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* Dangote lockup — white artwork, so it only sits on the navy sidebar. */
+.sb__logo {
+  width: 150px;
+  height: auto;
+  display: block;
+}
+
+.sb__mark {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--brand-rust);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.sb__brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.sb__title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.sb__subtitle {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sb__nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  // slim scrollbar
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.sb__group {
+  margin-bottom: 0.85rem;
+}
+
+.sb__heading {
+  margin: 0.5rem 0.75rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+}
+
+.sb__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  margin: 0.15rem 0;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+
+  mat-icon {
+    flex: 0 0 auto;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+
+  &--active {
+    background: var(--brand-rust);
+    color: #fff;
+  }
+
+  &--rail {
+    justify-content: center;
+    padding: 0.6rem 0;
+  }
+}
+
+.sb__foot {
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  justify-content: flex-end;
+
+  .sb__collapse {
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+.sb--rail-foot {
+  justify-content: center;
+}

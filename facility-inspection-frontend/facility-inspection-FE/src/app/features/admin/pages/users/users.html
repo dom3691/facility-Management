@@ -1,0 +1,94 @@
+<app-page-header title="Users" subtitle="Provision accounts — passwords are auto-generated and emailed" />
+
+<div class="note">
+  <mat-icon>info</mat-icon>
+  <span>
+    New users receive an email with a secure link to set their password. You never need to choose
+    or share a temporary password manually.
+  </span>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="form-card" novalidate>
+  @if (serverError(); as error) {
+    <div class="alert" role="alert"><mat-icon>error_outline</mat-icon><span>{{ error }}</span></div>
+  }
+
+  <div class="grid-2">
+    <mat-form-field appearance="outline">
+      <mat-label>First name</mat-label>
+      <input matInput formControlName="firstName" />
+      @if (form.controls.firstName.touched && form.controls.firstName.hasError('required')) {
+        <mat-error>First name is required.</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Last name</mat-label>
+      <input matInput formControlName="lastName" />
+      @if (form.controls.lastName.touched && form.controls.lastName.hasError('required')) {
+        <mat-error>Last name is required.</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="grid-2">
+    <mat-form-field appearance="outline">
+      <mat-label>SAP ID</mat-label>
+      <input matInput formControlName="sapId" placeholder="SAP-1001" />
+      @if (form.controls.sapId.touched && form.controls.sapId.hasError('required')) {
+        <mat-error>SAP ID is required.</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Role</mat-label>
+      <mat-select formControlName="role">
+        @for (r of roles; track r) {
+          <mat-option [value]="r">{{ r }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.role.touched && form.controls.role.hasError('required')) {
+        <mat-error>Role is required.</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  @if (isVendorRole()) {
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Vendor company</mat-label>
+      <mat-select formControlName="vendorId" [disabled]="vendorsLoading()">
+        @for (v of vendors(); track v.id) {
+          <mat-option [value]="v.id">{{ v.vendorName }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.vendorId.touched && form.controls.vendorId.hasError('required')) {
+        <mat-error>Select the vendor company this user belongs to.</mat-error>
+      }
+    </mat-form-field>
+  }
+
+  <div class="grid-2">
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" placeholder="user@dangote.com" />
+      @if (form.controls.email.touched && form.controls.email.hasError('required')) {
+        <mat-error>Email is required.</mat-error>
+      }
+      @if (form.controls.email.hasError('email')) {
+        <mat-error>Enter a valid email address.</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Phone (optional)</mat-label>
+      <input matInput formControlName="phoneNumber" />
+    </mat-form-field>
+  </div>
+
+  <div class="actions">
+    <button mat-flat-button type="submit" class="submit-btn" [disabled]="saving()">
+      @if (saving()) {
+        <span class="spinner-row"><mat-spinner diameter="18" /><span>Creating…</span></span>
+      } @else {
+        Create user &amp; send invite
+      }
+    </button>
+  </div>
+</form>

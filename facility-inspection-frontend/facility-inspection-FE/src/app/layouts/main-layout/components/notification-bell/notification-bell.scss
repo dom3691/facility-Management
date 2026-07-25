@@ -1,0 +1,69 @@
+.nb__trigger {
+  color: var(--brand-navy);
+}
+
+.nb__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  cursor: default;
+}
+
+.nb__title {
+  font-weight: 600;
+  color: var(--brand-navy);
+}
+
+.nb__count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--brand-rust);
+}
+
+.nb__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1.75rem 1rem;
+  color: var(--brand-muted);
+  cursor: default;
+
+  mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+  }
+}
+
+.nb__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: auto;
+  line-height: 1.3;
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+}
+
+.nb__item-title {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.nb__item-msg {
+  font-size: 0.78rem;
+  color: var(--brand-muted);
+  white-space: normal;
+}
+
+.nb__item-time {
+  font-size: 0.7rem;
+  color: var(--brand-muted);
+}

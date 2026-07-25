@@ -1,0 +1,6 @@
+namespace FacilityInspection.Application.Features.Authentication;
+
+public class ForgotPasswordRequest
+{
+    public string Email { get; set; } = string.Empty;
+}

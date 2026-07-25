@@ -1,0 +1,27 @@
+<app-page-header title="Reference Data" subtitle="Workflow lookup values used across the system" />
+
+@if (loading()) {
+  <div class="state"><mat-spinner diameter="36" /><p>Loading reference data…</p></div>
+} @else if (error()) {
+  <div class="state state--error">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error() }}</p>
+    <button mat-flat-button (click)="load()">Try again</button>
+  </div>
+} @else {
+  <div class="cards">
+    @for (group of groups(); track group.title) {
+      <section class="card">
+        <h2 class="card__title"><mat-icon>{{ group.icon }}</mat-icon> {{ group.title }}</h2>
+        <ul class="opts">
+          @for (opt of group.options; track opt.id) {
+            <li class="opt">
+              <span class="opt__id">{{ opt.id }}</span>
+              <span class="opt__name">{{ opt.name }}</span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  </div>
+}

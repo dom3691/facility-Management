@@ -1,0 +1,71 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--brand-canvas);
+}
+
+// --- Sidebar (desktop/tablet: in-flow; collapses to a rail) ---------------
+.shell__sidebar {
+  flex: 0 0 var(--sidebar-width);
+  width: var(--sidebar-width);
+  transition: flex-basis 0.2s ease, width 0.2s ease;
+}
+
+.shell--rail .shell__sidebar {
+  flex-basis: 72px;
+  width: 72px;
+}
+
+// --- Main column ----------------------------------------------------------
+.shell__main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell__crumbbar {
+  padding: 0.6rem 1.5rem;
+  background: var(--brand-surface);
+  border-bottom: 1px solid rgba(13, 27, 75, 0.06);
+}
+
+.shell__page {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+// --- Mobile: sidebar becomes an off-canvas drawer -------------------------
+.shell--mobile {
+  .shell__sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--sidebar-width);
+    flex-basis: var(--sidebar-width);
+    z-index: 60;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+  }
+
+  .shell__sidebar--open {
+    transform: translateX(0);
+  }
+
+  .shell__main {
+    width: 100%;
+  }
+
+  .shell__page {
+    padding: 1rem;
+  }
+}
+
+.shell__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(13, 27, 75, 0.45);
+}
